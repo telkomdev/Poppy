@@ -23,7 +23,7 @@ class Server(private val port: Int, waitQueueSize: Int) {
         serverSocket.bind(socketAddress, waitQueueSize)
     }
 
-    fun start() = runBlocking {
+    suspend fun start() = coroutineScope {
         while (true) {
             try {
                 println("waiting for client connection on port $port")
@@ -31,11 +31,10 @@ class Server(private val port: Int, waitQueueSize: Int) {
 
                 println("new client connected ${socket.remoteSocketAddress}")
 
-                val job = launch (Dispatchers.Default) {
+                // handle each client to its thread
+                launch (Dispatchers.Default) {
                     handleClient(socket)
                 }
-
-                job.join()
 
 
             } catch (e: SocketTimeoutException) {

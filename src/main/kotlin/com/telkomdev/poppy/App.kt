@@ -1,11 +1,12 @@
 package com.telkomdev.poppy
 
 
+import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.lang.NumberFormatException
 
 
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = runBlocking {
 
     val portStr: String? = System.getenv("PORT")
     val queueSizeStr: String? = System.getenv("QUEUE_SIZE")
