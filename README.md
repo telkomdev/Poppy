@@ -16,7 +16,8 @@ $ mvn clean package
 $ PORT=9000 QUEUE_SIZE=100 java -jar target/Poppy-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
 
-- Unit test
+- Client using `nc`
 ```shell
-$ mvn test
+$ nc localhost 9000
+$ hello
 ```
