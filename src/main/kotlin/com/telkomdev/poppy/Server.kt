@@ -32,7 +32,7 @@ class Server(private val port: Int, waitQueueSize: Int) {
                 println("new client connected ${socket.remoteSocketAddress}")
 
                 // handle each client to its thread
-                launch (Dispatchers.Default) {
+                launch(Dispatchers.Default) {
                     handleClient(socket)
                 }
 
