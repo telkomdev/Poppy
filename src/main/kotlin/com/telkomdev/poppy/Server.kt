@@ -13,7 +13,7 @@ import java.net.SocketTimeoutException
 val BUFFER: ByteArray? = ByteArray(1024)
 val OK: ByteArray? = byteArrayOf(79, 75, 10)
 
-class Server(private val port: Int, waitQueueSize: Int) {
+class Server(private val port: Int, waitQueueSize: Int, private var auth: String = "") {
 
     private val serverSocket: ServerSocket = ServerSocket()
 
@@ -47,32 +47,53 @@ class Server(private val port: Int, waitQueueSize: Int) {
         }
     }
 
-    private fun handleClient(socket: Socket) {
-        try {
-            var socketReader: DataInputStream?
-            var socketWriter: DataOutputStream?
+    private fun handleClient(socket: Socket) = try {
+        var socketReader: DataInputStream?
+        var socketWriter: DataOutputStream?
 
-            socketReader = DataInputStream(socket.getInputStream())
-            socketWriter = DataOutputStream(socket.getOutputStream())
+        socketReader = DataInputStream(socket.getInputStream())
+        socketWriter = DataOutputStream(socket.getOutputStream())
 
-            var len: Int
-            while (socketReader.read(BUFFER).let { len = it; it != -1 }) {
-                println("message len $len")
+        var len: Int
+        var isLogin = false
 
-                val messageByte = BUFFER
+        while (socketReader.read(BUFFER).let { len = it; it != -1 }) {
+
+            // read message from the client,
+            // the length of the BUFFER itself is 1024
+            // and we only need a byte of a message that sends by the client
+            // so we slice the message based on len variable that hold the length of a message from th client
+            // and slice begin from 0
+            val messageByte = BUFFER?.sliceArray(IntRange(0, len - 2))
+
+            if (!isLogin) {
+                socketWriter.writeBytes("unauthenticated\n")
+                socketWriter.flush()
+
+                val msgString = String(messageByte!!)
+                println(msgString == auth)
+
+                if (msgString == auth) {
+                    // if login succeed
+                    // then set isLogin to true
+                    isLogin = true
+                    socketWriter.writeBytes("authenticated\n")
+                    socketWriter.flush()
+                }
+            } else {
 
                 val msgString = String(messageByte!!)
                 println(msgString)
 
                 socketWriter.write(OK)
                 socketWriter.flush()
-
             }
 
-            println("client ${socket.remoteSocketAddress} disconnected")
-            socket.close()
-        } catch (e: Exception) {
-            println(e.message)
         }
+
+        println("client ${socket.remoteSocketAddress} disconnected")
+        socket.close()
+    } catch (e: Exception) {
+        println(e.message)
     }
 }

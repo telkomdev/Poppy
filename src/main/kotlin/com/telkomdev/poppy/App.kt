@@ -27,7 +27,7 @@ fun main(args: Array<String>) = runBlocking {
         port = Integer.parseInt(portStr)
         queueSize = Integer.parseInt(queueSizeStr)
 
-        val server = Server(port, queueSize)
+        val server = Server(port, queueSize, "12345")
 
         server.start()
 
