@@ -1,7 +1,7 @@
 ### Concurrent TCP Server with Kotlin and Coroutines
 #### Getting started
 
-- clone projet
+- clone project
 ```shell
 $ git clone https://github.com/telkomdev/Poppy.git
 ```
