@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.lang.Exception
 import java.net.InetSocketAddress
 import java.net.ServerSocket
@@ -14,6 +15,11 @@ val BUFFER: ByteArray? = ByteArray(1024)
 val OK: ByteArray? = byteArrayOf(79, 75, 10)
 val UNAUTHENTICATED = byteArrayOf(117, 110, 97, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100, 10)
 val AUTHENTICATED = byteArrayOf(97, 117, 116, 104, 101, 110, 116, 105, 99, 97, 116, 101, 100, 10)
+
+fun writeMessage(socketWriter: OutputStream, message: ByteArray) {
+    socketWriter.write(message)
+    socketWriter.flush()
+}
 
 class Server(private val port: Int, waitQueueSize: Int, private var auth: String = "") {
 
@@ -69,8 +75,7 @@ class Server(private val port: Int, waitQueueSize: Int, private var auth: String
             val messageByte = BUFFER?.sliceArray(IntRange(0, len - 2))
 
             if (!isLogin) {
-                socketWriter.write(UNAUTHENTICATED)
-                socketWriter.flush()
+                writeMessage(socketWriter, UNAUTHENTICATED)
 
                 // convert auth string to byte array
                 val authByte = auth.toByteArray()
@@ -80,16 +85,14 @@ class Server(private val port: Int, waitQueueSize: Int, private var auth: String
                     // if login succeed
                     // then set isLogin to true
                     isLogin = true
-                    socketWriter.write(AUTHENTICATED)
-                    socketWriter.flush()
+                    writeMessage(socketWriter, AUTHENTICATED)
                 }
             } else {
 
                 val msgString = String(messageByte!!)
                 println(msgString)
 
-                socketWriter.write(OK)
-                socketWriter.flush()
+                writeMessage(socketWriter, OK!!)
             }
 
         }
