@@ -21,3 +21,19 @@ $ PORT=9000 QUEUE_SIZE=100 java -jar target/Poppy-1.0-SNAPSHOT-jar-with-dependen
 $ nc localhost 9000
 $ hello
 ```
+
+### Docker
+```
+$ make build
+```
+
+Run
+```
+$ docker run --rm -p 9000:9000 --env PORT=9000 --env QUEUE_SIZE=100 poppy
+```
+
+Test it
+```
+$ docker exec -it CONTAINER_ID nc localhost:9000
+$ hello
+```
