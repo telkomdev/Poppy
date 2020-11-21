@@ -1,0 +1,15 @@
+[Unit]
+Description=TCP Echo server written in Kotlin
+Documentation=https://github.com/telkomdev/Poppy/blob/master/README.md
+After=network.target
+
+[Service]
+Environment=PORT=9000
+Environment=QUEUE_SIZE=100
+Type=simple
+User=vagrant
+ExecStart=/usr/bin/java -jar /home/vagrant/Poppy/target/Poppy-1.0-SNAPSHOT-jar-with-dependencies.jar
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
